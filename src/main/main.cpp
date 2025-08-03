@@ -36,16 +36,18 @@
  */
 int main(int argc, char* argv[])
 {
-    std::string messge;
-    int retv;
-    
     try 
     {
         perfex::program_args prog_args;
         spd::ap::arg_parser ap("perfex");
         
         ap.add_help_menu()
-                .description("Measure the user and kernel CPU time, as well as the monotonic time, of the given command.");
+                .description("Measure the user and kernel CPU time, as well as the monotonic time, "
+                             "of the given command.");
+        
+        ap.add_positional_arg("COMMAND")
+                .description("Coomand to execute.")
+                .store_into(prog_args.commnd);
                 
         ap.add_help_arg("--help", "-h")
                 .description("Display this help and exit.");
@@ -57,29 +59,14 @@ int main(int argc, char* argv[])
         ap.parse_args(argc, argv);
         
         perfex::program prog(std::move(prog_args));
-                
         return prog.execute();
-    }
-    catch (const perfex::exception_base& e)
-    {
-        messge = e.what();
-        retv = 1;
     }
     catch (const std::exception& e)
     {
-        messge = e.what();
-        retv = -1;
+        spd::ios::print_error_and_exit(std::cerr, "perfex", e.what(), 1);
     }
     catch (...)
     {
-        messge = "Unknown error";
-        retv = -1;
+        spd::ios::print_error_and_exit(std::cerr, "perfex", "Unknown error", 1);
     }
-    
-    std::cerr << spd::ios::newl
-              << spd::ios::set_light_red_text << "perfex: "
-              << spd::ios::set_default_text << messge
-              << std::endl;
-
-    return retv;
 }

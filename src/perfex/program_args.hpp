@@ -33,6 +33,7 @@ namespace perfex {
  */
 struct program_args
 {
+    std::string commnd;
 };
 
 }

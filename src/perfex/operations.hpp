@@ -18,42 +18,28 @@
  */
 
 /**
- * @file        program.hpp
- * @brief       program class header.
+ * @file        operations.hpp
+ * @brief       operations header.
  * @author      Killian Valverde
- * @date        2025/08/03
+ * @date        2025/08/05
  */
 
 #pragma once
 
+#include <iomanip>
+#include <iostream>
 #include <speed/speed.hpp>
-
-#include "exception.hpp"
-#include "program_args.hpp"
 
 namespace perfex {
 
-/**
- * @brief       perfex entry point class.
- */
-class program
+inline std::ostream& operator<<(std::ostream& os, const spd::sys::tm::time_specification& ts)
 {
-public:
-    /**
-     * @brief       Constructor with parameters.
-     * @param       prog_args : The program arguments.
-     */
-    explicit program(program_args&& prog_args);
+    os << ts.get_seconds()
+       << '.'
+       << std::setfill('0') << std::setw(3)
+       << (ts.get_nseconds() / 1'000'000);
     
-    /**
-     * @brief       Execute the program.
-     * @return      The value that represents if the program succeed.
-     */
-    int execute();
-
-private:
-    /** The program arguments. */
-    program_args prog_args_;
-};
+    return os;
+}
 
 }

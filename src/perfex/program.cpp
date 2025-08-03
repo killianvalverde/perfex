@@ -26,6 +26,8 @@
 
 #include "program.hpp"
 
+#include "operations.hpp"
+
 namespace perfex {
 
 program::program(program_args&& prog_args) 
@@ -35,7 +37,37 @@ program::program(program_args&& prog_args)
 
 int program::execute()
 {
-    std::cout << "hello, world" << std::endl;
+    int exit_cod;
+    spd::sys::tm::time_specification cpu_time_spec;
+    spd::sys::tm::time_specification elapsed_time_spec;
+    std::error_code error_cod;
+    std::ostringstream  oss;
+    std::string messge;
+    
+    if (!spd::sys::proc::execute(prog_args_.commnd.c_str(), &exit_cod, &cpu_time_spec,
+            &elapsed_time_spec, &error_cod))
+    {
+        spd::ios::print_error_and_exit(std::cerr, "perfex", error_cod.message(), 1);
+    }
+    
+    oss << "Process exited after "
+        << elapsed_time_spec
+        << " (CPU: "
+        << cpu_time_spec
+        << ") seconds with return value "
+        << exit_cod;
+    
+    messge = oss.str();
+    
+    std::cout << spd::ios::newl;
+    for (std::size_t i = 0; i < messge.size(); i++)
+    {
+        std::cout.put('-');
+    }
+    
+    std::cout << spd::ios::newl
+              << messge
+              << std::endl;
     
     return 0;
 }
